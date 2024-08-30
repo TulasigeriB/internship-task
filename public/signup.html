@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link rel="stylesheet" href="/stylesheets/admin.css">
+    <link rel="stylesheet" href="/stylesheets/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div class="parent">
+        <div class="form_container">
+            <div class="form_col ">
+                <div style="text-align: center; padding-bottom: 0.5vw;">
+                    <h2>
+                        Land a dream job by connecting with us.
+                    </h2>
+                </div>
+                <div class="fg1">
+                    <img src="/images/job_seeker_vector.png" alt="">
+                </div>
+            </div>
+            <div class="form_col form_col2">
+                <div>
+                    <div class="signup_form_col ">
+                        <div class="fg1">
+                            <div class="fields">
+                                <div class="did-floating-label-content">
+                                    <input class="did-floating-input" type="text" id="rgLastName" onfocus="addProps('rgLastName')" onblur="removeProps('rgLastName')">
+                                    <label class="did-floating-label" id="rgLastNameLabel">Name</label>
+                                </div>
+                                <div class="filds_warn">
+                                    <p id="rgLastNameWarn" class="" style="display: none; margin-top: 0.5vw; ">
+                                        Required Name
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="fields">
+                                <div class="did-floating-label-content">
+                                    <input class="did-floating-input" type="email" id="password" onfocus="addProps('password')" onblur="removeProps('password')">
+                                    <label class="did-floating-label" id="passwordLabel">Email</label>
+                                </div>
+                                <div class="filds_warn">
+                                    <p id="passwordWarn" class="" style="display: none; margin-top: 0.5vw; ">
+                                        Required Email
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="fields">
+                                <div class="did-floating-label-content">
+                                    <input class="did-floating-input" type="email" id="phnum" onfocus="addProps('phnum')" onblur="removeProps('phnum')">
+                                    <label class="did-floating-label" id="phnumLabel">Phone Number</label>
+                                </div>
+                                <div class="filds_warn">
+                                    <p id="phnumWarn" class="" style="display: none; margin-top: 0.5vw; ">
+                                        Required Phone Number
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="fields">
+                                <div class="">
+                                    <label class="" id="resumeLabel">Resume (pdf)</label>
+                                    <input class="did-floating-input" type="file" id="resume" accept="application/pdf">
+                                </div>
+                                <div class="filds_warn">
+                                    <p id="resumeWarn" class="" style="display: none; margin-top: 0.5vw; ">
+                                        Required Resume
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align: center;">
+                            <button class="fm_prm_btn" onclick="signup()">SUBMIT</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function addProps(id) {
+            $("#" + id).addClass('focus_border');
+            $("#" + id + "Label").addClass('focus_label');
+        }
+
+        function removeProps(id) {
+            if (document.getElementById(id).value.trim() === "") {
+                $("#" + id).removeClass('focus_border');
+                $("#" + id + "Label").removeClass('focus_label');
+            } else {
+                $("#" + id).addClass('focus_border');
+                $("#" + id + "Label").addClass('focus_label');
+            }
+        }
+        function signup() {
+            if ($("#rgLastName").val().trim() === "" && $("#password").val().trim() === "" && $("#phnum").val().trim() === "" && $("#resume").val().trim() === "") {
+                $("#rgLastNameWarn").slideDown(200);
+                $("#phnumWarn").slideDown(200);
+                $("#passwordWarn").slideDown(200);
+                $("#resumeWarn").slideDown(200);
+            } else if ($("#rgLastName").val().trim() === "") {
+                $("#phnumWarn").slideUp(200);
+                $("#resumeWarn").slideUp(200);
+                $("#passwordWarn").slideUp(200);
+                $("#rgLastNameWarn").slideDown(200);
+            } else if ($("#password").val().trim() === "") {
+                $("#rgLastNameWarn").slideUp(200);
+                $("#phnumWarn").slideUp(200);
+                $("#resumeWarn").slideUp(200);
+                $("#passwordWarn").slideDown(200);
+            } else if ($("#phnum").val().trim() === "") {
+                $("#rgLastNameWarn").slideUp(200);
+                $("#passwordWarn").slideUp(200);
+                $("#resumeWarn").slideUp(200);
+                $("#phnumWarn").slideDown(200);
+            } else if ($("#resume").val().trim() === "") {
+                $("#rgLastNameWarn").slideUp(200);
+                $("#passwordWarn").slideUp(200);
+                $("#phnumWarn").slideUp(200);
+                $("#resumeWarn").slideDown(200);
+            } else {
+                const resumeFile = document.getElementById('resume').files[0];
+
+                sendDetails($("#rgLastName").val(),
+                    $("#password").val(),
+                    $("#phnum").val(),
+                    resumeFile // Pass the actual file object
+                );
+            }
+        }
+        function sendDetails(nm, email, phnum, resume) {
+            // Create a FormData object to hold the data
+            let formData = new FormData();
+            formData.append('name', nm);
+            formData.append('email', email);
+            formData.append('phone_number', phnum);
+            formData.append('resume', resume);  // resume is now a file object
+
+            // AJAX settings
+            const settings = {
+                async: true,
+                crossDomain: true,
+                url: "http://localhost:3000/api/users/signup",
+                method: "POST",
+                processData: false, // Don't process the data
+                contentType: false, // Don't set content-type (let the browser set it as multipart/form-data)
+                data: formData,
+            };
+
+            // Make the AJAX request
+            $.ajax(settings)
+                .done(function (response) {
+                    console.log(response);
+                    window.location.href = './successpage.html';
+                })
+                .fail(function (error) {
+                    console.log(error);
+                    window.location.href = './errorpage.html';
+                });
+        }
+
+    </script>
+</body>
+
+</html>

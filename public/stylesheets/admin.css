@@ -1,0 +1,126 @@
+.form_container {
+    position: absolute;
+    width: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    box-shadow: 0 0 56px 0px #8c8c8c;
+    border-radius: 15px;
+}
+
+.form_col {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    padding: 70px 15px;
+}
+
+/* FORMS RELATED STYLES */
+.fields {
+    position: relative;
+    padding: 0 0 2vw 0;
+}
+
+.did-floating-label-content {
+    position: relative;
+}
+
+.did-floating-input {
+    width: 100%;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid #C1C1C1;
+    border-radius: 4px;
+    outline: none;
+}
+
+.did-floating-label {
+    color: #C1C1C1;
+    position: absolute;
+    pointer-events: none;
+    left: 8px;
+    padding: 0 5px;
+    top: 8px;
+    background: #fff;
+    transition: 0.2s ease all;
+}
+
+.filds_warn {
+    position: absolute;
+    bottom: 10px;
+}
+
+.filds_warn>p {
+    font-size: 13px;
+    color: #D6227C;
+}
+
+.focus_border {
+    border: 2px solid #384358;
+}
+
+.focus_label {
+    top: -8px;
+    color: #384358;
+}
+
+.fm_prm_btn {
+    padding: 1vw;
+    border-radius: 4px;
+    width: 100%;
+    background-color: #384358;
+    border: none;
+    outline: none;
+    color: #FFF;
+    cursor: pointer;
+    transition: 0.2s ease all;
+}
+
+.fm_prm_btn:hover {
+    transform: scale(1.01);
+    background-color: #47556f;
+}
+
+/* END OF FORMS RELATED STYLES */
+
+
+/* DASHBOARD STYLES */
+.header{
+    padding: 20px;
+    box-shadow: 0 0 9px #787777;
+}
+.section{
+    padding: 20px;
+}
+.parent_wrapper{
+    height: 100vh;
+}
+
+.list_wrapper{
+    padding: 10px;
+    border: 1px solid #505050;
+}
+
+.list_wrapper:hover{
+    border: 1px solid #454545;
+    background-color: #c9c9c9;
+}
+
+.list_holder{
+    flex-direction: column;
+    row-gap: 5px;
+    padding: 10px;
+    overflow-x: auto;
+}
+.view_wrapper{
+    padding: 10px 20px;
+}
+/* END OF DASHBOARD STYLES */
+
+/* HOME PAGE STYLES */
+.lists_wrapper>ul li{
+    margin-bottom: 10px;
+}
+/* END OF HOME PAGE STYLES */

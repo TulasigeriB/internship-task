@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="./stylesheets/styles.css">
+    <link rel="stylesheet" href="./stylesheets/admin.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+
+</head>
+
+<body>
+    <div class="loader_parent" id="loaderParent">
+        <div class="loader"></div>
+    </div>
+    <!-- display: none; -->
+    <div id="content">
+        <div class="parent_wrapper df fdc">
+            <header class="header">
+                <p>
+                    THIS IS HEADER
+                </p>
+            </header>
+            <section class="section df fg1">
+                <div style=" width: 30%; border: 1px solid #878787;">
+                    <div style=" padding: 20px;" class="df jcsb">
+                        <p>
+                            List of Applicants
+                        </p>
+                    </div>
+                    <div class="list_holder df" id="listHolder"> </div>
+                </div>
+                <div id="listContainer" style="width: 70%; display: none; border: 1px solid #878787; height: 100%;">
+                    <div style="height: inherit;" class="df fdc">
+                        <div style=" padding: 20px;" class="df jcsb">
+                            <p>
+                                Resume of Applicants
+                            </p>
+                        </div>
+                        <div class="view_wrapper df fdc fg1" style="row-gap: 15px;" id="viewContainer"> </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <script>
+        console.log(window.localStorage.getItem("token"));
+        // http://localhost:3000/api/admin/applications
+        async function getApplications() {
+            try {
+                const response = await $.ajax({
+                    url: "http://localhost:3000/api/admin/applications",
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${window.localStorage.getItem("token")}`
+                    }
+                });
+                $("#loaderParent").hide();
+                $("#content").show();
+                response.forEach(element => {
+                    $("#listHolder").append(
+                        "<div class=\"list_wrapper df aic jcsb\" onclick=\"viewDetails('" + element.id + "')\">" +
+                        "   <div>" +
+                        "       <p>" + element.name + "</p>" +
+                        "   </div>" +
+                        "   <div>" +
+                        "       <p>" + formatDate(element.created_at) + "</p>" +
+                        "   </div>" +
+                        "</div >"
+                    );
+                });
+                console.log(response);
+            } catch (error) {
+                console.error("Error fetching initial transaction:", error);
+                throw error;
+            }
+        }
+
+        function formatDate(dateStr) {
+            // Convert to Date object
+            const dateObj = new Date(dateStr);
+
+            // Arrays for day and month names
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+
+            // Get components of the date (in local time)
+            const dayName = days[dateObj.getDay()];
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const month = months[dateObj.getMonth()];
+            const year = dateObj.getFullYear();
+
+            // Get hours and minutes (in local time)
+            let hours = dateObj.getHours();
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+
+            // Determine AM or PM
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+
+            // Convert 24-hour format to 12-hour format
+            hours = hours % 12;
+            hours = hours ? hours : 12; // If hour is 0, set to 12
+
+            // Format the final date string
+            const formattedDate = `${dayName},${day}/${month}/${year}. ${hours}:${minutes} ${ampm}`;
+
+            return formattedDate;
+        }
+
+        async function viewDetails(id) {
+            try {
+                const response = await $.ajax({
+                    url: `http://localhost:3000/api/admin/applications/${id}/get`,
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${window.localStorage.getItem("token")}`
+                    }
+                });
+                $("#viewContainer").empty();
+                $("#viewContainer").append(
+                    "    <div style=\"height:100%\">" +
+                    "        <iframe src=\""+response[0].resume_path+"\" id=\"resumeViewer\" width=\"100%\" height=\"100%\"></iframe>" +
+                    "    </div>" 
+                );
+                $("#listContainer").show();
+            } catch (error) {
+                console.log(error);                
+            }
+        }
+        setTimeout(function () {
+            getApplications();
+        }, 1000)
+    </script>
+</body>
+
+</html>

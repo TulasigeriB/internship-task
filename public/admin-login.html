@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="/stylesheets/admin.css">
+    <link rel="stylesheet" href="/stylesheets/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div class="parent">
+        <div class="form_container">
+            <div class="form_col ">
+                <div style="text-align: center; padding-bottom: 0.5vw;">
+                    <h2>
+                        Welcome Admin.
+                    </h2>
+                </div>
+                <div class="fg1">
+                    <img src="/images/job_seeker_vector.png" alt="">
+                </div>
+            </div>
+            <div class="form_col form_col2">
+                <div class="fg1">
+                    <div class="fields">
+                        <div class="did-floating-label-content">
+                            <input class="did-floating-input" type="text" id="rgLastName" value="admin" onfocus="addProps('rgLastName')" onblur="removeProps('rgLastName')">
+                            <label class="did-floating-label" id="rgLastNameLabel">Username</label>
+                        </div>
+                        <div class="filds_warn">
+                            <p id="rgLastNameWarn" class="" style="display: none; padding-top: 0.5vw; ">
+                                Required Username
+                            </p>
+                        </div>
+                    </div>
+                    <div class="fields">
+                        <div class="did-floating-label-content">
+                            <input class="did-floating-input" type="password" id="password" value="admin@123" onfocus="addProps('password')" onblur="removeProps('password')">
+                            <label class="did-floating-label" id="passwordLabel">Password</label>
+                        </div>
+                        <div class="filds_warn">
+                            <p id="passwordWarn" class="" style="display: none; padding-top: 0.5vw; ">
+                                Required Password
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <button class="fm_prm_btn" onclick="validateRegistrationForm()">REGISTER</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function addProps(id) {
+            $("#" + id).addClass('focus_border');
+            $("#" + id + "Label").addClass('focus_label');
+        }
+
+        function removeProps(id) {
+            if (document.getElementById(id).value.trim() === "") {
+                $("#" + id).removeClass('focus_border');
+                $("#" + id + "Label").removeClass('focus_label');
+            } else {
+                $("#" + id).addClass('focus_border');
+                $("#" + id + "Label").addClass('focus_label');
+            }
+        }
+
+        function validateRegistrationForm() {
+            if ($("#rgLastName").val().trim() === "" && $("#password").val().trim() === "") {
+                $("#rgLastNameWarn").slideDown(200);
+                $("#passwordWarn").slideDown(200);
+            } else if ($("#rgLastName").val().trim() === "") {
+                $("#rgLastNameWarn").slideDown(200);
+                $("#passwordWarn").slideUp(200);
+            } else if ($("#password").val().trim() === "") {
+                $("#rgLastNameWarn").slideUp(200);
+                $("#passwordWarn").slideDown(200);
+            }else{
+                login();
+            }
+        }
+
+        function login() {
+            console.log("Im logging in");
+            // http://localhost:3000/api/auth/login
+
+            let userNameValue = $("#rgLastName").val();
+            let passwordValue = $("#password").val();
+
+            let options = {
+                username: userNameValue,
+                password: passwordValue,
+            };
+            const settings = {
+                async: true,
+                crossDomain: true,
+                url: "http://localhost:3000/api/auth/login",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                data: JSON.stringify(options),
+            };
+
+            $.ajax(settings)
+                .done(function (response) {
+                    localStorage.setItem("token", response.token);
+                    window.location.href = "/dashboard.html";
+                })
+                .fail(function (error) {
+                    if (error.responseText === "BAD USER") {
+                        $("#loginUserNameWarning").show();
+                    } else if (error.responseText === "BAD PASSWORD") {
+                        $("#loginPasswordWarning").show();
+                    }
+                });
+        }
+    </script>
+</body>
+
+</html>
