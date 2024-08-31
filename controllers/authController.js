@@ -1,35 +1,34 @@
-import db from '../config/db.js';
-import pkg1 from 'bcryptjs';
-const { compare } = pkg1;
-import pkg from 'jsonwebtoken';
-const { sign } = pkg;
-import { config } from 'dotenv';
+import client from '../config/db.js'; // Assuming the MongoDB client is exported from the db.js file
+import bcrypt from 'bcryptjs';
 
-config();
+const { compare } = bcrypt;
+import jwt from 'jsonwebtoken';
+
+const { sign } = jwt;
+
 
 // Admin Login
-export const login = (req, res) => {
+export const login = async (req, res) => {
     const { username, password } = req.body;
 
-    const sql = `SELECT * FROM admins WHERE username = ?`;
-    console.log(db);
-    
-    db.query(sql, [username], async (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
+    try {
+        const db = client.db("job_seeker_db");
+        const admin = await db.collection("admins").findOne({ username: username });
 
-        if (results.length === 0) {
+        if (!admin) {
             return res.status(400).json({ error: 'Invalid username or password' });
         }
 
-        const admin = results[0];
         const isMatch = await compare(password, admin.password);
 
         if (!isMatch) {
             return res.status(400).json({ error: 'Invalid username or password' });
         }
 
-        const token = sign({ id: admin.id, username: admin.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = sign({ id: admin._id, username: admin.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.status(200).json({ token });
-    });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 };

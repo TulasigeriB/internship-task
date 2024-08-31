@@ -2,7 +2,7 @@ import express, { json, urlencoded } from 'express';
 import { config } from 'dotenv';
 import path from 'path';
 import cors from 'cors';
-
+import { connectToMongoDB } from './config/db.js'; 
 
 config();
 
@@ -29,6 +29,13 @@ app.use('/api/auth', authRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// Call connectToMongoDB() before handling requests
+connectToMongoDB().then(() => {
+    // Start listening for requests only after the DB connection is established
+    app.listen(process.env.PORT || 3000, () => {
+        console.log(`Server is running on port ${process.env.PORT || 3000}`);
+    });
+}).catch(err => {
+    console.error('Failed to connect to MongoDB', err);
+    process.exit(1); // Exit the process if unable to connect to MongoDB
 });

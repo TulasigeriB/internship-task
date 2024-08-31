@@ -122,9 +122,10 @@
                     }
                 });
                 $("#viewContainer").empty();
+                debugger
                 $("#viewContainer").append(
                     "    <div style=\"height:100%\">" +
-                    "        <iframe src=\""+response[0].resume_path+"\" id=\"resumeViewer\" width=\"100%\" height=\"100%\"></iframe>" +
+                    "        <iframe src=\""+response.resume_path+"\" id=\"resumeViewer\" width=\"100%\" height=\"100%\"></iframe>" +
                     "    </div>" 
                 );
                 $("#listContainer").show();

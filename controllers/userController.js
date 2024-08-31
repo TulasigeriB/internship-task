@@ -1,8 +1,8 @@
-import { v4 as uuidv4 } from 'uuid'; // Ensure you're importing uuidv4
-import db from '../config/db.js'; // Adjust the import based on your project structure
+import { v4 as uuidv4 } from 'uuid';
+import client from '../config/db.js'; // Assuming the MongoDB client is exported from the db.js file
 
 // Signup handler
-export const signup = (req, res) => {
+export const signup = async (req, res) => {
     const { name, email, phone_number } = req.body;
     const resumePath = req.file ? req.file.path : null;
 
@@ -12,10 +12,19 @@ export const signup = (req, res) => {
 
     const userId = uuidv4(); // Generate UUID here
 
-    const sql = `INSERT INTO users (id, name, email, phone_number, resume_path) VALUES (?, ?, ?, ?, ?)`;
+    try {
+        const db = client.db("job_seeker_db"); // Replace with your database name
+        const result = await db.collection("users").insertOne({
+            id: userId,
+            name: name,
+            email: email,
+            phone_number: phone_number,
+            resume_path: resumePath,
+            created_at: new Date() // Optional: Add a timestamp for when the user signed up
+        });
 
-    db.query(sql, [userId, name, email, phone_number, resumePath], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
         res.status(201).json({ message: 'User signed up successfully', userId });
-    });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 };

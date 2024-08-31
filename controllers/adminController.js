@@ -1,48 +1,35 @@
-import db from '../config/db.js';
+import client from '../config/db.js'; // Assuming the MongoDB client is exported from the db.js file
+import { ObjectId } from 'mongodb';
 import path from 'path';
 const __dirname = path.resolve();
 
-// Get all applications
-export const getApplications = (req, res) => {
-    const sql = `SELECT id, name, created_at, status FROM users`;
-    db.query(sql, (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-
-        res.status(200).json(results);
-    });
-};
+const dbName = "job_seeker_db";
+const collectionName = "users";
 
 // Get all applications
-export const getApplicationsDetails = (req, res) => {
-    const { id } = req.params;
-    const sql = `SELECT * FROM users WHERE id="${id}"`;
-    db.query(sql, (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-
-        res.status(200).json(results);
-    });
+export const getApplications = async (req, res) => {
+    try {
+        const db = client.db(dbName);
+        const users = await db.collection(collectionName).find({}).toArray();
+        res.status(200).json(users);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 };
 
-// Accept an application
-export const acceptApplication = (req, res) => {
+export const getApplicationDetails = async (req, res) => {
     const { id } = req.params;
+    try {
+        // Validate if it's a UUID format if needed
+        if (!id) return res.status(400).json({ error: "ID is required" });
 
-    const sql = `UPDATE users SET status = 'Accepted' WHERE id = "${id}"`;
-    db.query(sql, (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        const db = client.db(dbName);
+        // Use string ID for UUIDs
+        const user = await db.collection(collectionName).findOne({ id: id });
 
-        res.status(200).json({ message: 'Application accepted' });
-    });
-};
-
-// Reject an application
-export const rejectApplication = (req, res) => {
-    const { id } = req.params;
-
-    const sql = `UPDATE users SET status = 'Rejected' WHERE id = ?`;
-    db(sql, [id], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-
-        res.status(200).json({ message: 'Application rejected' });
-    });
+        if (!user) return res.status(404).json({ error: "Application not found" });
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 };

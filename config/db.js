@@ -1,18 +1,28 @@
-import { createConnection } from 'mysql';
+import { MongoClient, ServerApiVersion } from 'mongodb';
 import { config } from 'dotenv';
 
+// Load environment variables from .env file
 config();
 
-const db = createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: '',
-    database: process.env.DB_NAME,
+// Create a MongoClient instance with environment variables
+const client = new MongoClient(process.env.MONGO_URI, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
 });
 
-db.connect((err) => {
-    if (err) throw err;
-    console.log('Connected to MySQL Database.');
-});
+// Function to connect to MongoDB
+export async function connectToMongoDB() {
+  try {
+    await client.connect();
+    console.log("Connected to MongoDB!");
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+    throw err;
+  }
+}
 
-export default db;
+// Export the MongoClient instance for use in other parts of the application
+export default client;
