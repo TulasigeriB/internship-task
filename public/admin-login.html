@@ -87,7 +87,7 @@
 
         function login() {
             console.log("Im logging in");
-            // https://internship-task-vz0j9wgng-kartiks-projects-82d412c7.vercel.app/api/auth/login
+            // http://localhost:3000/api/auth/login
 
             let userNameValue = $("#rgLastName").val();
             let passwordValue = $("#password").val();
@@ -99,7 +99,7 @@
             const settings = {
                 async: true,
                 crossDomain: true,
-                url: "https://internship-task-vz0j9wgng-kartiks-projects-82d412c7.vercel.app/api/auth/login",
+                url: "http://localhost:3000/api/auth/login",
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
