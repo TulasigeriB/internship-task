@@ -11,16 +11,16 @@ const app = express();
 // Middleware
 app.use(json());
 app.use(urlencoded({ extended: true }));
+app.use(cors());
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json({ limit: '50mb' }));
-app.use(cors());
 
 // Routes
-import userRoutes from './routes/user.js';
-import adminRoutes from './routes/admin.js';
-import authRoutes from './routes/auth.js';
+import userRoutes from './api/user.js';
+import adminRoutes from './api/admin.js';
+import authRoutes from './api/auth.js';
 
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
