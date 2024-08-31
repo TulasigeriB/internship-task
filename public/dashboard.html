@@ -48,11 +48,11 @@
     </div>
     <script>
         console.log(window.localStorage.getItem("token"));
-        // http://localhost:3000/api/admin/applications
+        // https://internship-task-vz0j9wgng-kartiks-projects-82d412c7.vercel.app/api/admin/applications
         async function getApplications() {
             try {
                 const response = await $.ajax({
-                    url: "http://localhost:3000/api/admin/applications",
+                    url: "https://internship-task-vz0j9wgng-kartiks-projects-82d412c7.vercel.app/api/admin/applications",
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -114,7 +114,7 @@
         async function viewDetails(id) {
             try {
                 const response = await $.ajax({
-                    url: `http://localhost:3000/api/admin/applications/${id}/get`,
+                    url: `https://internship-task-vz0j9wgng-kartiks-projects-82d412c7.vercel.app/api/admin/applications/${id}/get`,
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
